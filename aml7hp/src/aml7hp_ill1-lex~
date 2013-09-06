@@ -1,0 +1,5 @@
+VAR a = b
+b = a
+DO
+STEP
+VAR b = a && 1

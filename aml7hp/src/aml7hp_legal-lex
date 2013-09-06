@@ -1,0 +1,6 @@
+BEGIN turtlewalk
+VAR abc = 123
+DO abc = abc + 4 * 1.23
+sin(1)
+JUMP()
+END

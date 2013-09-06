@@ -1,0 +1,4 @@
+VAR a = b
+b = a
+VAR b = a && 1
+abc = "What the @*%^#"
