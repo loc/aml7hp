@@ -35,9 +35,14 @@ sqrt            return SQRT;
 \/              return DIV;
 \(              return OPEN;
 \)              return CLOSE;
+>=              return GTE;
+<=              return LTE;
 =               return ASSIGN;
-\}               return CLOSECURLY;
-\{               return OPENCURLY;
+\}              return CLOSECURLY;
+\{              return OPENCURLY;
+>               return GT;
+<               return LT;
+
 
 [a-z]+          { yylval.n = lookup(yytext); 
                   if (yylval.n==NULL)
