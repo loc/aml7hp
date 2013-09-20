@@ -28,20 +28,22 @@ sin             return SIN;
 cos             return COS;
 sqrt            return SQRT;
 
-;               return SEMICOLON;
+\;              return SEMICOLON;
 \+              return PLUS;
--               return MINUS;
+\-               return MINUS;
 \*              return TIMES;
 \/              return DIV;
 \(              return OPEN;
 \)              return CLOSE;
->=              return GTE;
-<=              return LTE;
-=               return ASSIGN;
+\>\=              return GTE;
+\<\=              return LTE;
+\=               return ASSIGN;
+\=\=              return EQUALITY;
+\!\=              return UNEQUAL;
 \}              return CLOSECURLY;
 \{              return OPENCURLY;
->               return GT;
-<               return LT;
+\>               return GT;
+\<               return LT;
 
 
 [a-z]+          { yylval.n = lookup(yytext); 
