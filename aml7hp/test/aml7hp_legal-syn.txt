@@ -1,0 +1,16 @@
+VAR a;
+VAR b;
+
+BEGIN
+a = b + cos(sqrt(4));
+
+TURN a + 30;
+JUMP -5/1 + 3;
+JUMP -(3*3);
+
+FOR a = 4 
+    STEP 1.5 
+TO 8 
+DO 
+    GO b + a;    
+END

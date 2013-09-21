@@ -1,0 +1,8 @@
+BEGIN
+
+FOR a, j
+	STEP VAR i
+TO SQRT(213 + 78.1)
+DO BEGIN
+
+END
