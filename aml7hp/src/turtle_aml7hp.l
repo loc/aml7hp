@@ -1,6 +1,6 @@
 %{
 #include "symtab.h"
-#include "token.h"
+#include "turtle_aml7hp.tab.h"
 %}
 
 %%

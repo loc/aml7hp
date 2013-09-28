@@ -1,0 +1,30 @@
+VAR myvar;
+
+myvar=4;
+
+IF(myvar==4) THEN {
+    GO 40;
+    TURN 90;
+    GO 40;
+    TURN 90;
+    GO 40;
+    TURN 90;
+    GO 40;
+    TURN 90;
+}
+
+JUMP 80;
+
+IF (myvar>=7) THEN {
+	IF (myvar>=12) THEN {
+		GO 40;
+		TURN 90;
+		GO 40;
+	} 
+	ELSE{
+		GO 20;
+	}
+} 
+ELSE{
+	GO 30;
+}
