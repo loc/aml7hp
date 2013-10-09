@@ -1,0 +1,18 @@
+VAR i;
+VAR j;
+
+i=0;
+j=0;
+
+WHILE(i < 5) {
+  WHILE(j < 5) {
+    GO 20;
+    TURN 180;
+    IF(j != 2) THEN {
+       JUMP 10;
+    }
+    j = j+1;
+  }
+  TURN 90;
+  i--;
+}   

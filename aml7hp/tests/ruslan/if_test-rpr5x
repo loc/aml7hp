@@ -1,0 +1,16 @@
+VAR test;
+
+test = 3;
+
+IF(test >= 7) THEN {
+  GO 40;
+  TURN 90;
+}
+ELSE IF(test <= 2) THEN {
+  GO 120;
+  TURN 30;
+}
+ELSE {
+  GO 30;
+}
+
