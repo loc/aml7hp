@@ -40,6 +40,8 @@ decl: VAR ID SEMICOLON { printf("/tlt%s 0 def\n",$2->symbol);} ;
 stmtlist: ;
 stmtlist: stmtlist stmt ;
 
+stmt: ID PLUS PLUS SEMICOLON {printf("tlt%s 1 add /tlt%s exch store\n",$1->symbol, $1->symbol);} ;
+stmt: ID MINUS MINUS SEMICOLON {printf("tlt%s 1 sub /tlt%s exch store\n",$1->symbol, $1->symbol);} ;
 stmt: ID ASSIGN bool SEMICOLON {printf("/tlt%s exch store\n",$1->symbol);} ;
 stmt: GO bool SEMICOLON {printf("0 rlineto\n");};
 stmt: JUMP bool SEMICOLON {printf("0 rmoveto\n");};
