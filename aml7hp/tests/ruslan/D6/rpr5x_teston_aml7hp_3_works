@@ -1,0 +1,18 @@
+VAR test;
+VAR x;
+VAR y;
+
+test = 5;
+x = 3;
+y = 6;
+
+WHILE ((test < (7+3)) == (test > 3)){
+	IF(test == 6) THEN {
+            WHILE(x < y){
+              GO 100;
+              TURN 30;
+              JUMP 20;
+              x = x + 1;
+            }
+         }
+}

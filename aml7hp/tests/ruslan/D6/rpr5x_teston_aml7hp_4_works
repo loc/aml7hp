@@ -1,0 +1,19 @@
+VAR p;
+VAR q;
+VAR r;
+
+p = (2 < 3);
+q = 2;
+r = 8;
+
+IF(p) THEN {
+  GO 60;
+}
+ELSE{
+  WHILE(q < r){
+    GO 10;
+    TURN 45;
+    JUMP 30;
+    q = q+1;
+  }
+}

@@ -1,0 +1,19 @@
+VAR a;
+VAR b;
+
+a = 0;
+b = 10;
+
+WHILE(a < b) {
+   WHILE(b < 20) {
+     JUMP 30;
+     GO 50;
+     b = b+1;
+     IF(b==15) THEN {
+       TURN 30;
+     }
+   }
+   TURN 90;
+   a = a+1;
+}
+
