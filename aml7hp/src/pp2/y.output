@@ -1,0 +1,507 @@
+Terminals which are not used
+
+   T_Class
+   T_LessEqual
+   T_GreaterEqual
+   T_Equal
+   T_NotEqual
+   T_And
+   T_Or
+   T_Null
+   T_Extends
+   T_This
+   T_Interface
+   T_Implements
+   T_While
+   T_For
+   T_If
+   T_Else
+   T_Return
+   T_Break
+   T_New
+   T_NewArray
+   T_Print
+   T_ReadInteger
+   T_ReadLine
+   T_StringConstant
+   T_IntConstant
+   T_DoubleConstant
+   T_BoolConstant
+
+
+Grammar
+
+    0 $accept: Program $end
+
+    1 Program: DeclList
+
+    2 DeclList: DeclList Decl
+    3         | Decl
+
+    4 Decl: VarDecl
+    5     | FnDecl
+
+    6 VarDecl: Variable ';'
+
+    7 Variable: Type T_Identifier
+
+    8 Type: T_Int
+    9     | T_Bool
+   10     | T_String
+   11     | T_Double
+   12     | T_Identifier
+   13     | Type T_Dims
+
+   14 FnDecl: FnHeader StmtBlock
+
+   15 FnHeader: Type T_Identifier '(' Formals ')'
+   16         | T_Void T_Identifier '(' Formals ')'
+
+   17 Formals: FormalList
+   18        | /* empty */
+
+   19 FormalList: FormalList ',' Variable
+   20           | Variable
+
+   21 StmtBlock: '{' VarDecls StmtList '}'
+
+   22 VarDecls: VarDecls VarDecl
+   23         | /* empty */
+
+   24 StmtList: /* empty */
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'(' (40) 15 16
+')' (41) 15 16
+',' (44) 19
+';' (59) 6
+'{' (123) 21
+'}' (125) 21
+error (256)
+T_Void (258) 16
+T_Bool (259) 9
+T_Int (260) 8
+T_Double (261) 11
+T_String (262) 10
+T_Class (263)
+T_LessEqual (264)
+T_GreaterEqual (265)
+T_Equal (266)
+T_NotEqual (267)
+T_Dims (268) 13
+T_And (269)
+T_Or (270)
+T_Null (271)
+T_Extends (272)
+T_This (273)
+T_Interface (274)
+T_Implements (275)
+T_While (276)
+T_For (277)
+T_If (278)
+T_Else (279)
+T_Return (280)
+T_Break (281)
+T_New (282)
+T_NewArray (283)
+T_Print (284)
+T_ReadInteger (285)
+T_ReadLine (286)
+T_Identifier (287) 7 12 15 16
+T_StringConstant (288)
+T_IntConstant (289)
+T_DoubleConstant (290)
+T_BoolConstant (291)
+
+
+Nonterminals, with rules where they appear
+
+$accept (43)
+    on left: 0
+Program (44)
+    on left: 1, on right: 0
+DeclList (45)
+    on left: 2 3, on right: 1 2
+Decl (46)
+    on left: 4 5, on right: 2 3
+VarDecl (47)
+    on left: 6, on right: 4 22
+Variable (48)
+    on left: 7, on right: 6 19 20
+Type (49)
+    on left: 8 9 10 11 12 13, on right: 7 13 15
+FnDecl (50)
+    on left: 14, on right: 5
+FnHeader (51)
+    on left: 15 16, on right: 14
+Formals (52)
+    on left: 17 18, on right: 15 16
+FormalList (53)
+    on left: 19 20, on right: 17 19
+StmtBlock (54)
+    on left: 21, on right: 14
+VarDecls (55)
+    on left: 22 23, on right: 21 22
+StmtList (56)
+    on left: 24, on right: 21
+
+
+state 0
+
+    0 $accept: . Program $end
+
+    T_Void        shift, and go to state 1
+    T_Bool        shift, and go to state 2
+    T_Int         shift, and go to state 3
+    T_Double      shift, and go to state 4
+    T_String      shift, and go to state 5
+    T_Identifier  shift, and go to state 6
+
+    Program   go to state 7
+    DeclList  go to state 8
+    Decl      go to state 9
+    VarDecl   go to state 10
+    Variable  go to state 11
+    Type      go to state 12
+    FnDecl    go to state 13
+    FnHeader  go to state 14
+
+
+state 1
+
+   16 FnHeader: T_Void . T_Identifier '(' Formals ')'
+
+    T_Identifier  shift, and go to state 15
+
+
+state 2
+
+    9 Type: T_Bool .
+
+    $default  reduce using rule 9 (Type)
+
+
+state 3
+
+    8 Type: T_Int .
+
+    $default  reduce using rule 8 (Type)
+
+
+state 4
+
+   11 Type: T_Double .
+
+    $default  reduce using rule 11 (Type)
+
+
+state 5
+
+   10 Type: T_String .
+
+    $default  reduce using rule 10 (Type)
+
+
+state 6
+
+   12 Type: T_Identifier .
+
+    $default  reduce using rule 12 (Type)
+
+
+state 7
+
+    0 $accept: Program . $end
+
+    $end  shift, and go to state 16
+
+
+state 8
+
+    1 Program: DeclList .
+    2 DeclList: DeclList . Decl
+
+    T_Void        shift, and go to state 1
+    T_Bool        shift, and go to state 2
+    T_Int         shift, and go to state 3
+    T_Double      shift, and go to state 4
+    T_String      shift, and go to state 5
+    T_Identifier  shift, and go to state 6
+
+    $default  reduce using rule 1 (Program)
+
+    Decl      go to state 17
+    VarDecl   go to state 10
+    Variable  go to state 11
+    Type      go to state 12
+    FnDecl    go to state 13
+    FnHeader  go to state 14
+
+
+state 9
+
+    3 DeclList: Decl .
+
+    $default  reduce using rule 3 (DeclList)
+
+
+state 10
+
+    4 Decl: VarDecl .
+
+    $default  reduce using rule 4 (Decl)
+
+
+state 11
+
+    6 VarDecl: Variable . ';'
+
+    ';'  shift, and go to state 18
+
+
+state 12
+
+    7 Variable: Type . T_Identifier
+   13 Type: Type . T_Dims
+   15 FnHeader: Type . T_Identifier '(' Formals ')'
+
+    T_Dims        shift, and go to state 19
+    T_Identifier  shift, and go to state 20
+
+
+state 13
+
+    5 Decl: FnDecl .
+
+    $default  reduce using rule 5 (Decl)
+
+
+state 14
+
+   14 FnDecl: FnHeader . StmtBlock
+
+    '{'  shift, and go to state 21
+
+    StmtBlock  go to state 22
+
+
+state 15
+
+   16 FnHeader: T_Void T_Identifier . '(' Formals ')'
+
+    '('  shift, and go to state 23
+
+
+state 16
+
+    0 $accept: Program $end .
+
+    $default  accept
+
+
+state 17
+
+    2 DeclList: DeclList Decl .
+
+    $default  reduce using rule 2 (DeclList)
+
+
+state 18
+
+    6 VarDecl: Variable ';' .
+
+    $default  reduce using rule 6 (VarDecl)
+
+
+state 19
+
+   13 Type: Type T_Dims .
+
+    $default  reduce using rule 13 (Type)
+
+
+state 20
+
+    7 Variable: Type T_Identifier .
+   15 FnHeader: Type T_Identifier . '(' Formals ')'
+
+    '('  shift, and go to state 24
+
+    $default  reduce using rule 7 (Variable)
+
+
+state 21
+
+   21 StmtBlock: '{' . VarDecls StmtList '}'
+
+    $default  reduce using rule 23 (VarDecls)
+
+    VarDecls  go to state 25
+
+
+state 22
+
+   14 FnDecl: FnHeader StmtBlock .
+
+    $default  reduce using rule 14 (FnDecl)
+
+
+state 23
+
+   16 FnHeader: T_Void T_Identifier '(' . Formals ')'
+
+    T_Bool        shift, and go to state 2
+    T_Int         shift, and go to state 3
+    T_Double      shift, and go to state 4
+    T_String      shift, and go to state 5
+    T_Identifier  shift, and go to state 6
+
+    $default  reduce using rule 18 (Formals)
+
+    Variable    go to state 26
+    Type        go to state 27
+    Formals     go to state 28
+    FormalList  go to state 29
+
+
+state 24
+
+   15 FnHeader: Type T_Identifier '(' . Formals ')'
+
+    T_Bool        shift, and go to state 2
+    T_Int         shift, and go to state 3
+    T_Double      shift, and go to state 4
+    T_String      shift, and go to state 5
+    T_Identifier  shift, and go to state 6
+
+    $default  reduce using rule 18 (Formals)
+
+    Variable    go to state 26
+    Type        go to state 27
+    Formals     go to state 30
+    FormalList  go to state 29
+
+
+state 25
+
+   21 StmtBlock: '{' VarDecls . StmtList '}'
+   22 VarDecls: VarDecls . VarDecl
+
+    T_Bool        shift, and go to state 2
+    T_Int         shift, and go to state 3
+    T_Double      shift, and go to state 4
+    T_String      shift, and go to state 5
+    T_Identifier  shift, and go to state 6
+
+    $default  reduce using rule 24 (StmtList)
+
+    VarDecl   go to state 31
+    Variable  go to state 11
+    Type      go to state 27
+    StmtList  go to state 32
+
+
+state 26
+
+   20 FormalList: Variable .
+
+    $default  reduce using rule 20 (FormalList)
+
+
+state 27
+
+    7 Variable: Type . T_Identifier
+   13 Type: Type . T_Dims
+
+    T_Dims        shift, and go to state 19
+    T_Identifier  shift, and go to state 33
+
+
+state 28
+
+   16 FnHeader: T_Void T_Identifier '(' Formals . ')'
+
+    ')'  shift, and go to state 34
+
+
+state 29
+
+   17 Formals: FormalList .
+   19 FormalList: FormalList . ',' Variable
+
+    ','  shift, and go to state 35
+
+    $default  reduce using rule 17 (Formals)
+
+
+state 30
+
+   15 FnHeader: Type T_Identifier '(' Formals . ')'
+
+    ')'  shift, and go to state 36
+
+
+state 31
+
+   22 VarDecls: VarDecls VarDecl .
+
+    $default  reduce using rule 22 (VarDecls)
+
+
+state 32
+
+   21 StmtBlock: '{' VarDecls StmtList . '}'
+
+    '}'  shift, and go to state 37
+
+
+state 33
+
+    7 Variable: Type T_Identifier .
+
+    $default  reduce using rule 7 (Variable)
+
+
+state 34
+
+   16 FnHeader: T_Void T_Identifier '(' Formals ')' .
+
+    $default  reduce using rule 16 (FnHeader)
+
+
+state 35
+
+   19 FormalList: FormalList ',' . Variable
+
+    T_Bool        shift, and go to state 2
+    T_Int         shift, and go to state 3
+    T_Double      shift, and go to state 4
+    T_String      shift, and go to state 5
+    T_Identifier  shift, and go to state 6
+
+    Variable  go to state 38
+    Type      go to state 27
+
+
+state 36
+
+   15 FnHeader: Type T_Identifier '(' Formals ')' .
+
+    $default  reduce using rule 15 (FnHeader)
+
+
+state 37
+
+   21 StmtBlock: '{' VarDecls StmtList '}' .
+
+    $default  reduce using rule 21 (StmtBlock)
+
+
+state 38
+
+   19 FormalList: FormalList ',' Variable .
+
+    $default  reduce using rule 19 (FormalList)
