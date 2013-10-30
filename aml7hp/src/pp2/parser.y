@@ -323,10 +323,10 @@ LValue    : T_Identifier                { $$ = new FieldAccess(NULL, new Identif
           | Expr '[' Expr ']'           { $$ = new ArrayAccess(@1, $1, $3); }
 ;
 
-Constant  : T_IntConstant               { $$ = new IntContstant(@1, $1); }
-          | T_BoolConstant              { $$ = new BoolContstant(@1, $1); } 
-          | T_DoubleConstant            { $$ = new DoubleContstant(@1, $1); }   
-          | T_StringConstant            { $$ = new StringContstant(@1, $1); }   
+Constant  : T_IntConstant               { $$ = new IntConstant(@1, $1); }
+          | T_BoolConstant              { $$ = new BoolConstant(@1, $1); } 
+          | T_DoubleConstant            { $$ = new DoubleConstant(@1, $1); }   
+          | T_StringConstant            { $$ = new StringConstant(@1, $1); }   
 ;
 
          
