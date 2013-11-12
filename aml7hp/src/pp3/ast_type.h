@@ -44,10 +44,9 @@ class NamedType : public Type
     
   public:
     NamedType(Identifier *i);
-
-
     Identifier * GetId() {return id;}
     void PrintToStream(std::ostream& out) { out << id; }
+    bool IsEquivalentTo(Type *other) { return (strcmp(this->GetId()->name, dynamic_cast<NamedType*>(other)->GetId()->name) == 0); }
     void Check(Scope * scope);
 };
 

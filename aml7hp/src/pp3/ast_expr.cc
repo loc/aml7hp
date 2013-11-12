@@ -47,7 +47,7 @@ CompoundExpr::CompoundExpr(Operator *o, Expr *r)
 }
 
 void CompoundExpr::Check(Scope * scope) {
-  left->Check(scope);
+  if (left) left->Check(scope);
   right->Check(scope);
 }  
   
