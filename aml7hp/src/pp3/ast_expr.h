@@ -27,6 +27,7 @@ class Expr : public Stmt
     Expr(yyltype loc) : Stmt(loc) {}
     Expr() : Stmt() {}
     void Check(Scope * scope) {}
+    virtual void Symtab(Inherit * root){};
 };
 
 /* This node type is used for those places where an expression is optional.
@@ -146,6 +147,7 @@ class This : public Expr
 {
   public:
     This(yyltype loc) : Expr(loc) {}
+    void Check(Scope * scope);
 };
 
 class ArrayAccess : public LValue 
@@ -224,5 +226,13 @@ class ReadLineExpr : public Expr
     ReadLineExpr(yyltype loc) : Expr (loc) {}
 };
 
+class PostfixExpr : public Expr
+{
+   protected:
+     LValue *lvalue;
+     Operator *op;
+  public: 
+    PostfixExpr(LValue *lv, Operator *op);
+};
     
 #endif

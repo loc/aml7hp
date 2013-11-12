@@ -95,6 +95,9 @@ Call::Call(yyltype loc, Expr *b, Identifier *f, List<Expr*> *a) : Expr(loc)  {
     (actuals=a)->SetParentAll(this);
 }
 
+void This::Check(Scope * scope) {
+    scope->ThisInClassScope(this);
+}
 
 void NewExpr::Check(Scope * scope) {
     cType->Check(scope);
@@ -114,6 +117,12 @@ NewArrayExpr::NewArrayExpr(yyltype loc, Expr *sz, Type *et) : Expr(loc) {
     Assert(sz != NULL && et != NULL);
     (size=sz)->SetParent(this); 
     (elemType=et)->SetParent(this);
+}
+
+PostfixExpr::PostfixExpr(LValue *lv, Operator *o) : Expr(Join(lv->GetLocation(), o->GetLocation())) {
+    Assert(lv != NULL && o != NULL);
+    (lvalue=lv)->SetParent(this);
+    (op=o)->SetParent(this);
 }
 
        

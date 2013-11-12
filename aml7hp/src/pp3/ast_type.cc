@@ -26,6 +26,7 @@ Type *Type::errorType  = new Type("error");
 Type::Type(const char *n) {
     Assert(n);
     typeName = strdup(n);
+    this->compatables = new List<Decl *>;
 }
 
 
@@ -34,7 +35,11 @@ Type::Type(const char *n) {
 NamedType::NamedType(Identifier *i) : Type(*i->GetLocation()) {
     Assert(i != NULL);
     (id=i)->SetParent(this);
-} 
+}
+
+void NamedType::Check(Scope * scope) {
+	scope->CheckIfTypeExists(this);
+}
 
 
 ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {
@@ -42,4 +47,7 @@ ArrayType::ArrayType(yyltype loc, Type *et) : Type(loc) {
     (elemType=et)->SetParent(this);
 }
 
+void ArrayType::Check(Scope * scope) {
+	elemType->Check(scope);
+}
 

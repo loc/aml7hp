@@ -39,6 +39,9 @@
 
 class Decl;
 class ClassDecl;
+class NamedType;
+class This;
+class InterfaceDecl;
 
 class Scope {
   public:
@@ -48,11 +51,17 @@ class Scope {
     List<Scope *> * interfaces;
     Scope * extends;
     Scope();
-    void CheckVariableAlreadyDecl(const char *name);
-    void CheckClassAlreadyDecl(const char *name);
-    void CheckInterfaceAlreadyDecl(const char *name);
-    void CheckFunctionAlreadyDecl(const char *name);
-    void CheckIfVariableDecl(const char *name);
+    void CheckVariableAlreadyDecl(Decl *decl);
+    void CheckClassAlreadyDecl(Decl *decl);
+    void CheckInterfaceAlreadyDecl(Decl *decl);
+    void CheckFunctionAlreadyDecl(Decl *decl);
+    void CheckIfVariableDecl(Decl *decl);
+    void CheckIfTypeExists(NamedType *decl);
+    void ThisInClassScope(This *node);
+    void CheckFunctionOverridesProperly(Decl *decl);
+    ClassDecl * FindClassDeclFromNamedType(NamedType * decl);
+    InterfaceDecl * FindInterfaceDeclFromNamedType(NamedType * decl);
+    Scope * FindScopeFromNamedType(NamedType *decl);
 };
 
 class Node 
@@ -69,6 +78,8 @@ class Node
     yyltype *GetLocation()   { return location; }
     void SetParent(Node *p)  { parent = p; }
     Node *GetParent()        { return parent; }
+
+    virtual ~Node() {}
 };
    
 

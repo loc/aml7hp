@@ -7,6 +7,7 @@
 #include "ast_stmt.h"
 #include "hashtable.h"
 #include <stack>
+#include "errors.h"
         
          
 Decl::Decl(Identifier *n) : Node(*n->GetLocation()) {
@@ -26,12 +27,13 @@ VarDecl::VarDecl(Identifier *n, Type *t) : Decl(n) {
 
 void VarDecl::Symtab(Inherit * root) {
     root->activeScopes->top()->symtab->Enter(this->id->name, this, false);
-   //this->scope = root->activeScopes->top();
+    this->scope = root->activeScopes->top();
     //printf("%s", this->id->name);
 }
 
 void VarDecl::Check(Scope * scope) {
-    scope->CheckVariableAlreadyDecl(id->name);
+    this->scope->CheckVariableAlreadyDecl(this);
+    type->Check(scope);
 }
   
 
@@ -39,7 +41,12 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
     // exte nds can be NULL, impl & mem may be empty lists but cannot be NULL
     Assert(n != NULL && imp != NULL && m != NULL);     
     extends = ex;
-    if (extends) extends->SetParent(this);
+    if (extends) {
+        extends->SetParent(this);
+    }
+    else {
+        extends = NULL;
+    }
     (implements=imp)->SetParentAll(this);
     (members=m)->SetParentAll(this);
 }
@@ -47,7 +54,7 @@ ClassDecl::ClassDecl(Identifier *n, NamedType *ex, List<NamedType*> *imp, List<D
 void ClassDecl::Check(Scope * scope) {
     //parent->classes->Enter(id->name, root);
 
-    scope->CheckClassAlreadyDecl(id->name);
+    this->scope->parent->CheckClassAlreadyDecl(this);
 
     for (int i=0;i < members->NumElements(); i++) {
         members->Nth(i)->Check(scope);
@@ -90,11 +97,31 @@ InterfaceDecl::InterfaceDecl(Identifier *n, List<Decl*> *m) : Decl(n) {
 }
 
 void InterfaceDecl::Check(Scope * scope) {
-    scope->CheckInterfaceAlreadyDecl(id->name);
+    this->scope->parent->CheckInterfaceAlreadyDecl(this);
 
     for (int i=0; i < members->NumElements(); i++) {
         members->Nth(i)->Check(scope);
     }
+}
+
+void InterfaceDecl::Symtab(Inherit * root) {
+    Scope * parentScope = root->activeScopes->top();
+    Scope * newScope = new Scope();
+
+    this->scope = newScope;
+
+    parentScope->symtab->Enter(this->id->name, this, false);
+    newScope->parent = parentScope;
+    parentScope->children->Append(newScope);
+
+    root->scopes->Append(newScope);
+    root->activeScopes->push(newScope);
+
+    for (int i=0;i < members->NumElements(); i++) {
+        members->Nth(i)->Symtab(root);
+    }
+
+    root->activeScopes->pop();
 }
 
 	
@@ -111,16 +138,22 @@ void FnDecl::SetFunctionBody(Stmt *b) {
 
 void FnDecl::Check(Scope * scope) {
 
-    scope->CheckFunctionAlreadyDecl(id->name);
+    this->scope->parent->CheckFunctionAlreadyDecl(this);
+    this->scope->CheckFunctionOverridesProperly(this);
 
     for (int i=0; i < formals->NumElements(); i++) {
-        formals->Nth(i)->Check(scope);
+        formals->Nth(i)->Check(this->scope);
     }
-    body->Check(scope);
+    if (body) {
+        body->Check(this->scope);
+    }
 }
 
 void FnDecl::Symtab(Inherit* root) {
     Scope * parentScope = root->activeScopes->top();
+
+    returnType->Check(parentScope);
+
     Scope * newScope = new Scope();
 
     this->scope = newScope;
@@ -134,6 +167,10 @@ void FnDecl::Symtab(Inherit* root) {
 
     for (int i=0;i < formals->NumElements(); i++) {
         formals->Nth(i)->Symtab(root);
+    }
+
+    if (body) {
+        body->Symtab(root);
     }
 
     root->activeScopes->pop();

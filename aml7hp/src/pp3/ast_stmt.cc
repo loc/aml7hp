@@ -6,6 +6,7 @@
 #include "ast_type.h"
 #include "ast_decl.h"
 #include "ast_expr.h"
+#include "errors.h"
 
 
 Program::Program(List<Decl*> *d) {
@@ -37,6 +38,8 @@ void Program::Symtab() {
 
     Scope * GlobalScope = new Scope();
 
+    this->scope = GlobalScope;
+
     root->activeScopes->push(GlobalScope);
 
     for (int i=0;i < decls->NumElements(); i++) {
@@ -45,29 +48,45 @@ void Program::Symtab() {
 }
 
 void Program::Inheritance() {
-    // Inheritable * element;
-    // Scope * extends;
-    // Scope * impl;
+    Inheritable * element;
+    Scope * extends = NULL;
+    Decl * impl;
+    Type * newType;
+    ClassDecl * classDecl;
 
-    // for (int i=0;i < inheritables->NumElements(); i++) {
-    //     element = inheritables->Nth(i);
-    //     if (element->classDecl->extends) {
-    //         extends = element->scope->FindScopeFromNamedType(element->classDecl->extends);
-    //         if(!extends) {
-    //             //error, couldn't find extends
-    //         }
-    //     }
+    for (int i=0;i < root->inheritables->NumElements(); i++) {
+        element = root->inheritables->Nth(i);
+        newType = new Type(element->classDecl->GetId()->name);
+        if (element->classDecl->extends) {
+            classDecl = element->classDecl->scope->FindClassDeclFromNamedType(element->classDecl->extends);
+            if (classDecl) {
+                extends = classDecl->scope;
+            }
+            if(!extends) {
+                //error, couldn't find extends
+                ReportError::IdentifierNotDeclared(element->classDecl->extends->GetId(),LookingForClass);
+            }
+            if (extends) {
+                newType->compatables->Append(classDecl);
+            }
+            element->classDecl->scope->extends = extends;
+        }
 
-    //     for (int j=0;j < element->classDecl->implements->NumElements(); j++) {
-    //         impl = element->scope->FindScopeFromNamedType(element->classDecl->implements->Nth(i));
-    //         if(!impl) {
-    //             //error, couldn't find impl
-    //         }
-    //     }
+        for (int j=0;j < element->classDecl->implements->NumElements(); j++) {
+            impl = element->classDecl->scope->FindInterfaceDeclFromNamedType(element->classDecl->implements->Nth(j));
+            if(!impl) {
+                //error, couldn't find impl
+                ReportError::IdentifierNotDeclared(element->classDecl->implements->Nth(j)->GetId(),LookingForInterface);
+            }
+            else {
+                element->classDecl->scope->interfaces->Append(impl->scope);
+                newType->compatables->Append(impl);
+            }
+        }
 
-
-    //     element->scope->extends = extends;
-    // }
+        element->classDecl->type = newType;
+        element->scope->extends = extends;
+    }
 }
 
 StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
@@ -80,11 +99,33 @@ StmtBlock::StmtBlock(List<VarDecl*> *d, List<Stmt*> *s) {
 void StmtBlock::Check(Scope * scope) {
     int i;
     for(i=0; i < decls->NumElements(); i++) {
-        decls->Nth(i)->Check(scope);
+        decls->Nth(i)->Check(this->scope);
     }
     for(i=0; i < stmts->NumElements(); i++) {
-        stmts->Nth(i)->Check(scope);
+        stmts->Nth(i)->Check(this->scope);
     }
+}
+
+void StmtBlock::Symtab(Inherit* root){
+
+    Scope * newScope = new Scope();
+    newScope->parent = root->activeScopes->top();
+    root->activeScopes->top()->children->Append(newScope);
+
+    root->scopes->Append(newScope);
+    root->activeScopes->push(newScope);
+
+    this->scope = newScope;
+
+    int i;
+    for(i=0; i < decls->NumElements(); i++) {
+        decls->Nth(i)->Symtab(root);
+    }
+    for(i=0; i < stmts->NumElements(); i++) {
+        stmts->Nth(i)->Symtab(root);
+    }
+
+    root->activeScopes->pop();
 }
 
 
@@ -111,6 +152,11 @@ void LoopStmt::Check(Scope * scope) {
     body->Check(scope);
 }
 
+void LoopStmt::Symtab(Inherit* root){
+    body->Symtab(root);
+}
+
+
 void ForStmt::Check(Scope * scope) {
     test->Check(scope);
     body->Check(scope);
@@ -118,9 +164,17 @@ void ForStmt::Check(Scope * scope) {
     step->Check(scope);
 }
 
+void ForStmt::Symtab(Inherit* root){
+    body->Symtab(root);
+}
+
 void WhileStmt::Check(Scope * scope) {
     test->Check(scope);
     body->Check(scope);
+}
+
+void WhileStmt::Symtab(Inherit* root){
+    body->Symtab(root);
 }
 
 IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) { 
@@ -132,7 +186,16 @@ IfStmt::IfStmt(Expr *t, Stmt *tb, Stmt *eb): ConditionalStmt(t, tb) {
 void IfStmt::Check(Scope * scope) {
     test->Check(scope);
     body->Check(scope);
-    elseBody->Check(scope);
+    if (elseBody) {
+        elseBody->Check(scope);
+    }
+}
+
+void IfStmt::Symtab(Inherit* root){
+    body->Symtab(root);
+    if (elseBody) {
+        elseBody->Symtab(root);
+    }
 }
 
 
@@ -157,4 +220,16 @@ void PrintStmt::Check(Scope * scope) {
     }
 }
 
+Case::Case(IntConstant *v, List<Stmt*> *s) {
+    Assert(s != NULL);
+    value = v;
+    if (value) value->SetParent(this);
+    (stmts=s)->SetParentAll(this);
+}
+
+SwitchStmt::SwitchStmt(Expr *e, List<Case*> *c) {
+    Assert(e != NULL && c != NULL);
+    (expr=e)->SetParent(this);
+    (cases=c)->SetParentAll(this);
+}
 

@@ -26,12 +26,15 @@ class Type : public Node
     static Type *intType, *doubleType, *boolType, *voidType,
                 *nullType, *stringType, *errorType;
 
-    Type(yyltype loc) : Node(loc) {}
+    Type(yyltype loc) : Node(loc) {this->compatables = new List<Decl *>;}
     Type(const char *str);
+
+    List<Decl *> * compatables;
     
     virtual void PrintToStream(std::ostream& out) { out << typeName; }
     friend std::ostream& operator<<(std::ostream& out, Type *t) { t->PrintToStream(out); return out; }
     virtual bool IsEquivalentTo(Type *other) { return this == other; }
+    virtual void Check(Scope * scope){};
 };
 
 class NamedType : public Type 
@@ -41,9 +44,11 @@ class NamedType : public Type
     
   public:
     NamedType(Identifier *i);
-    
+
+
+    Identifier * GetId() {return id;}
     void PrintToStream(std::ostream& out) { out << id; }
-    void Check(Scope * scope) {};
+    void Check(Scope * scope);
 };
 
 class ArrayType : public Type 
@@ -55,6 +60,7 @@ class ArrayType : public Type
     ArrayType(yyltype loc, Type *elemType);
     
     void PrintToStream(std::ostream& out) { out << elemType << "[]"; }
+    void Check(Scope * scope);
 };
 
  

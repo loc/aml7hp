@@ -36,11 +36,9 @@ class Decl : public Node
 };
 
 class VarDecl : public Decl 
-{
-  protected:
-    Type *type;
-    
+{    
   public:
+    Type *type;
     VarDecl(Identifier *name, Type *type);
     void Symtab(Inherit *);
     void Check(Scope * scope);
@@ -48,12 +46,12 @@ class VarDecl : public Decl
 
 class ClassDecl : public Decl 
 {
-  protected:
-    List<Decl*> *members;
-    NamedType *extends;
-    List<NamedType*> *implements;
 
   public:
+    List<Decl*> *members;
+    Type * type;
+    NamedType *extends;
+    List<NamedType*> *implements;
     ClassDecl(Identifier *name, NamedType *extends, 
               List<NamedType*> *implements, List<Decl*> *members);
     void Check(Scope * scope);
@@ -68,16 +66,15 @@ class InterfaceDecl : public Decl
   public:
     InterfaceDecl(Identifier *name, List<Decl*> *members);
     void Check(Scope * scope);
+    void Symtab(Inherit *);
 };
 
 class FnDecl : public Decl 
-{
-  protected:
+{    
+  public:
     List<VarDecl*> *formals;
     Type *returnType;
     Stmt *body;
-    
-  public:
     FnDecl(Identifier *name, Type *returnType, List<VarDecl*> *formals);
     void SetFunctionBody(Stmt *b);
     void Symtab(Inherit* root);
