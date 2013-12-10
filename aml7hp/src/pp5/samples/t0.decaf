@@ -1,0 +1,12 @@
+
+void main() {
+	string s;
+	string b;
+
+	s = "hello";
+	b = "hello";
+	Print(s == b);
+
+	b = ReadLine();
+	Print(s == b);
+}

@@ -1,0 +1,18 @@
+
+void main() {
+	int c;
+	int d;
+	int e;
+
+	d = 4;
+	c = 5;
+	e = c + 5;
+
+	if (d < c) {
+		Print(c);
+	}
+	else {
+		Print(d);
+	}
+	Print(e);
+}
