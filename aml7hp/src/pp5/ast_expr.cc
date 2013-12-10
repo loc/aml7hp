@@ -172,7 +172,7 @@ FieldAccess::FieldAccess(Expr *b, Identifier *f)
 }
 
 Location * FieldAccess::Eval() {
-    this->Eval(false);
+    return this->Eval(false);
 }
 
 Location * FieldAccess::Eval(bool returnAddr) {
@@ -229,7 +229,9 @@ Location * Call::Eval() {
     ClassLookup * classInfo = NULL;
     Location * baseLoc = NULL;
 
-    if (!base) {
+    This * it = dynamic_cast<This *>(base);
+
+    if (!base || it) {
         Node * node = this->parent;
         ClassDecl * classDecl;
         while (node) {
@@ -250,7 +252,7 @@ Location * Call::Eval() {
 
     if (base || baseLoc) {
         if (baseLoc == NULL) baseLoc = base->Eval();
-        if (base && strcmp(baseLoc->GetType(), "array") == 0) {
+        if (base && baseLoc->GetType() && strcmp(baseLoc->GetType(), "array") == 0) {
             // base is an array, not an object
             if (strcmp(field->name, "length") == 0) {
                 loc = generator->GenLoad(baseLoc);
@@ -302,7 +304,7 @@ Location * AssignExpr::Eval() {
     ArrayAccess * array;
     FieldAccess * field;
     if (field = dynamic_cast<FieldAccess *>(left)){
-        if (!this->GetTmpLocation(field->field->name)) {
+        if (!this->GetTmpLocation(field->field->name) || field->base) {
             Location * val = right->Eval();
             Location * memAddr = field->Eval(true);
             generator->GenStore(memAddr, val, 4);
